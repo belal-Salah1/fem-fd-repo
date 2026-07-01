@@ -1,5 +1,5 @@
 MIGRATION_DIR := migrations
-AWS_ACCOUNT_ID := 677459762413
+AWS_ACCOUNT_ID :=136492550028
 AWS_DEFAULT_REGION := us-east-1
 AWS_ECR_DOMAIN := $(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com
 GIT_SHA := $(shell git rev-parse HEAD)
