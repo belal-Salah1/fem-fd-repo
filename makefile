@@ -7,8 +7,8 @@ BUILD_IMAGE := $(AWS_ECR_DOMAIN)/fem-fd-service
 BUILD_TAG := $(if $(BUILD_TAG),$(BUILD_TAG),latest)
 DOCKERIZE_HOST := $(shell echo $(GOOSE_DBSTRING) | cut -d "@" -f 2 | cut -d ":" -f 1)
 DOCKERIZE_URL := tcp://$(if $(DOCKERIZE_HOST),$(DOCKERIZE_HOST):5432,localhost:5432)
-.DEFAULT_GOAL := build
 
+.DEFAULT_GOAL := build
 
 build:
 	go build -o ./goals main.go
@@ -19,6 +19,7 @@ build-image:
 		--tag "$(BUILD_IMAGE):$(GIT_SHA)-build" \
 		--target "build" \
 		.
+
 	docker buildx build \
 		--cache-from "$(BUILD_IMAGE):$(GIT_SHA)-build" \
 		--platform "linux/amd64" \
@@ -28,12 +29,11 @@ build-image:
 build-image-login:
 	aws ecr get-login-password --region $(AWS_DEFAULT_REGION) | docker login --username AWS --password-stdin $(AWS_ECR_DOMAIN)
 
-build-image-push:build-image-login build-image
-	docker image push $(BUILD_IMAGE):$(BUILD_TAG)
+build-image-push: build-image-login build-image
+	docker image push $(BUILD_IMAGE):$(GIT_SHA)
 
-build-image-pull:build-image-login build-image
+build-image-pull: build-image-login
 	docker image pull $(BUILD_IMAGE):$(GIT_SHA)
-
 
 build-image-migrate:
 	docker container run \
@@ -44,6 +44,7 @@ build-image-migrate:
 		-timeout 30s \
 		-wait \
 		$(DOCKERIZE_URL)
+
 	docker container run \
 		--entrypoint "goose" \
 		--env "GOOSE_DBSTRING" \
@@ -52,6 +53,7 @@ build-image-migrate:
 		--rm \
 		$(BUILD_IMAGE):$(GIT_SHA) \
 		-dir $(MIGRATION_DIR) status
+
 	docker container run \
 		--entrypoint "goose" \
 		--env "GOOSE_DBSTRING" \
@@ -60,6 +62,7 @@ build-image-migrate:
 		--rm \
 		$(BUILD_IMAGE):$(GIT_SHA) \
 		-dir $(MIGRATION_DIR) validate
+
 	docker container run \
 		--entrypoint "goose" \
 		--env "GOOSE_DBSTRING" \
