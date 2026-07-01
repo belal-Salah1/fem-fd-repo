@@ -80,7 +80,7 @@ down:
 	docker compose down --remove-orphans --volumes
 
 up: down
-	docker compose up --detach
+	docker compose up --detach --wait
 
 deploy:
 	AWS_ACCOUNT_ID=$(AWS_ACCOUNT_ID) \
