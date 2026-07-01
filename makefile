@@ -72,6 +72,16 @@ build-image-migrate:
 		$(BUILD_IMAGE):$(GIT_SHA) \
 		-dir $(MIGRATION_DIR) up
 
+build-image-migrate-reset:
+	docker container run \
+		--entrypoint "goose" \
+		--env "GOOSE_DBSTRING" \
+		--env "GOOSE_DRIVER" \
+		--network "host" \
+		--rm \
+		$(BUILD_IMAGE):$(GIT_SHA) \
+		-dir $(MIGRATION_DIR) reset
+
 build-image-promote:
 	docker image tag $(BUILD_IMAGE):$(GIT_SHA) $(BUILD_IMAGE):$(BUILD_TAG)
 	docker image push $(BUILD_IMAGE):$(BUILD_TAG)
