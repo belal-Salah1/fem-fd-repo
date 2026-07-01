@@ -16,7 +16,14 @@ build:
 build-image:
 	docker buildx build \
 		--platform "linux/amd64" \
-		--tag "$(BUILD_IMAGE):$(BUILD_TAG)" .
+		--tag "$(BUILD_IMAGE):$(GIT_SHA)-build" \
+		--target "build" \
+		.
+	docker buildx build \
+		--cache-from "$(BUILD_IMAGE):$(GIT_SHA)-build" \
+		--platform "linux/amd64" \
+		--tag "$(BUILD_IMAGE):$(GIT_SHA)" \
+		.
 
 build-image-login:
 	aws ecr get-login-password --region $(AWS_DEFAULT_REGION) | docker login --username AWS --password-stdin $(AWS_ECR_DOMAIN)
