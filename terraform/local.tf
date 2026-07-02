@@ -1,3 +1,3 @@
 locals{
-    bastion_ingress = ["YOUR_IP/32"]
+    bastion_ingress = ["197.35.148.138/32"]
 }
