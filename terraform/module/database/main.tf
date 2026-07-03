@@ -20,7 +20,7 @@ module "this" {
   create_monitoring_role              = false
   db_subnet_group_name                = var.vpc_name
   engine                              = "postgres"
-  engine_version                      = "17.2"
+  engine_version                      = "17.10"
   iam_database_authentication_enabled = false
   identifier                          = var.name
   instance_class                      = "db.t4g.micro"
