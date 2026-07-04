@@ -1,6 +1,6 @@
 module "staging" {
-  source = "./module/environment"
+  source          = "./module/environment"
   bastion_ingress = local.bastion_ingress
-  name = "staging"
+  name            = "staging"
 }
   
